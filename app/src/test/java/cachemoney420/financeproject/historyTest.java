@@ -87,6 +87,7 @@ public class historyTest {
         List<Pair<BigDecimal, Integer>> ratioList = new ArrayList<>(ratioMap.keySet());
         Collections.sort(ratioList, sPairComparator);
         Collections.reverse(ratioList);
+        System.out.println();
         assert(sPairComparator.compare(ratioList.get(0), ratioList.get(1)) == 1);
     }
 }

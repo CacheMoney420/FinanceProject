@@ -82,7 +82,7 @@ public class Compare {
         return ratioMap;
 
     }
-    public List<Pair<BigDecimal, Integer>> sortCompares(HashMap<Pair<BigDecimal, Integer>, String> ratioMap) {
+    public static List<Pair<BigDecimal, Integer>> sortCompares(HashMap<Pair<BigDecimal, Integer>, String> ratioMap) {
         List<Pair<BigDecimal, Integer>> ratioList = new ArrayList<>(ratioMap.keySet());
         Collections.sort(ratioList, sPairComparator);
         Collections.reverse(ratioList);
