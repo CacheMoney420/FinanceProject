@@ -37,7 +37,7 @@ public class Compare {
         }
     };
 
-    public HashMap<Pair<BigDecimal, Integer>, String> getCompare(String[] over, String[] under) {
+    public static HashMap<Pair<BigDecimal, Integer>, String> getCompare(String[] over, String[] under) {
 
         HashMap<Pair<BigDecimal, Integer>, String> ratioMap =
                 new HashMap<>();
