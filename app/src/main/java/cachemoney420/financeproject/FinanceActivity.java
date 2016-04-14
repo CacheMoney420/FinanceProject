@@ -2,18 +2,18 @@ package cachemoney420.financeproject;
 
 import android.content.Intent;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import cachemoney420.financeproject.Comparison;
 import java.util.List;
 
 public class FinanceActivity extends Fragment {
 
-    private RecyclerView mFinanceRecyclerView;
+    private RecyclerView mComparisonRecyclerView;
     private ComparisonAdapter mAdapter;
 
     @Override
@@ -26,6 +26,9 @@ public class FinanceActivity extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_finance_list, container, false);
 
+        mComparisonRecyclerView = (RecyclerView) view.findViewById(R.id.comparison_recycler_view);
+        mComparisonRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
         for (int i=0; i < 10; i++) {
             Comparison c = new Comparison();
             c.setTag1("abc" + i);
@@ -35,7 +38,33 @@ public class FinanceActivity extends Fragment {
             c.setRank(Integer.toString(i+1));
         }
 
+        updateUI();
+
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateUI();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    private void updateUI() {
+        ComparisonLab comparisonLab = ComparisonLab.get(getActivity());
+        List<Comparison> comparisons = comparisonLab.getComparisons();
+
+        if (mAdapter == null) {
+            mAdapter = new ComparisonAdapter(comparisons);
+            mComparisonRecyclerView.setAdapter(mAdapter);
+        } else {
+            mAdapter.setComparisons(comparisons);
+            mAdapter.notifyDataSetChanged();
+        }
     }
 
     private class ComparisonHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
