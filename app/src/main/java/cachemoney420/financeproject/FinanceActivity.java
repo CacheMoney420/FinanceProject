@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import java.util.List;
 
+
 public class FinanceActivity extends Fragment {
 
     private RecyclerView mComparisonRecyclerView;
@@ -36,6 +37,7 @@ public class FinanceActivity extends Fragment {
             String r = Float.toString(i/2);
             c.setRatio(r);
             c.setRank(Integer.toString(i+1));
+
         }
 
         updateUI();

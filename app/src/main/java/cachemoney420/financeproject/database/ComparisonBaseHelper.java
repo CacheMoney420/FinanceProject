@@ -15,7 +15,7 @@ public class ComparisonBaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table " + ComparisonDbSchema.ComparisonTable.NAME + "(" +
-        " _id integer primary autoincrement, " +
+        " _id integer primary key autoincrement, " +
                 ComparisonDbSchema.ComparisonTable.Cols.UUID + ", " +
                 ComparisonDbSchema.ComparisonTable.Cols.TAG1 + ", " +
                 ComparisonDbSchema.ComparisonTable.Cols.TAG2 + ", " +
