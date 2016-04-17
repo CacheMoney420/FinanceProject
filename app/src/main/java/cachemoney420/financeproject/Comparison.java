@@ -10,6 +10,18 @@ public class Comparison {
     private String mRatio;
     private String mRank;
 
+    public Comparison(){
+        this(UUID.randomUUID());
+    }
+
+    public UUID getId() {
+        return mId;
+    }
+
+    public Comparison(UUID id) {
+        mId = id;
+    }
+
     public String getTag1() {
         return mTag1;
     }
@@ -42,15 +54,4 @@ public class Comparison {
         mRank = rank;
     }
 
-    public Comparison(){
-        this(UUID.randomUUID());
-    }
-
-    public UUID getId() {
-        return mId;
-    }
-
-    public Comparison(UUID id) {
-        mId = id;
-    }
 }

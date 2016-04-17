@@ -23,6 +23,17 @@ public class ComparisonLab {
         if (sComparisonLab == null) {
             sComparisonLab = new ComparisonLab(context);
         }
+        for (int i=0; i < 10; i++) {
+            Comparison c = new Comparison();
+
+            c.setTag1("abc" + i);
+            c.setTag2("def" + i);
+            String r = Float.toString(i/2);
+            c.setRatio(r);
+            c.setRank(Integer.toString(i+1));
+            sComparisonLab.addComparison(c);
+        }
+
         return sComparisonLab;
     }
 
@@ -33,7 +44,6 @@ public class ComparisonLab {
 
     public void addComparison(Comparison c) {
         ContentValues values = getContentValues(c);
-
         mDatabase.insert(ComparisonTable.NAME, null, values);
     }
 

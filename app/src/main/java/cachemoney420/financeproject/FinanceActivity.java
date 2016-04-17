@@ -17,6 +17,7 @@ public class FinanceActivity extends Fragment {
     private RecyclerView mComparisonRecyclerView;
     private ComparisonAdapter mAdapter;
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,15 +33,14 @@ public class FinanceActivity extends Fragment {
 
         for (int i=0; i < 10; i++) {
             Comparison c = new Comparison();
+
             c.setTag1("abc" + i);
             c.setTag2("def" + i);
             String r = Float.toString(i/2);
             c.setRatio(r);
             c.setRank(Integer.toString(i+1));
-
+            addComparison(c);
         }
-
-        updateUI();
 
         return view;
     }
@@ -67,6 +67,10 @@ public class FinanceActivity extends Fragment {
             mAdapter.setComparisons(comparisons);
             mAdapter.notifyDataSetChanged();
         }
+    }
+
+    private void addComparison(Comparison comparison) {
+        ComparisonLab.get(getActivity()).addComparison(comparison);
     }
 
     private class ComparisonHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
