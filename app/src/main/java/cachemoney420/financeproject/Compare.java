@@ -18,10 +18,6 @@ import yahoofinance.YahooFinance;
 import yahoofinance.histquotes.HistoricalQuote;
 import yahoofinance.histquotes.Interval;
 
-
-/**
- * Created by mspear on 4/5/16.
- */
 public class Compare {
     private static final String TAG = "tag";
 
