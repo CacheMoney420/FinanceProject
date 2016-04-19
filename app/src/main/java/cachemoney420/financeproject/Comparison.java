@@ -5,8 +5,8 @@ import java.util.UUID;
 public class Comparison {
 
     private UUID mId;
-    private String mTag1;
-    private String mTag2;
+    private String mOverweight;
+    private String mUnderweight;
     private String mRatio;
     private String mRank;
 
@@ -22,20 +22,20 @@ public class Comparison {
         mId = id;
     }
 
-    public String getTag1() {
-        return mTag1;
+    public String getOverweight() {
+        return mOverweight;
     }
 
-    public void setTag1(String tag1) {
-        mTag1 = tag1;
+    public void setOverweight(String overweight) {
+        mOverweight = overweight;
     }
 
-    public String getTag2() {
-        return mTag2;
+    public String getUnderweight() {
+        return mUnderweight;
     }
 
-    public void setTag2(String tag2) {
-        mTag2 = tag2;
+    public void setUnderweight(String underweight) {
+        mUnderweight = underweight;
     }
 
     public String getRatio() {

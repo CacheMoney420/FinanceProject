@@ -13,10 +13,6 @@ import java.util.Map;
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
 
-
-/**
- * Created by mspear on 4/5/16.
- */
 public class Compare {
     private static final String TAG = "tag";
 

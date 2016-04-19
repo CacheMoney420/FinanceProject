@@ -20,8 +20,8 @@ public class ComparisonCursorWrapper extends CursorWrapper {
         String rank = getString(getColumnIndex(ComparisonTable.Cols.RANK));
 
         Comparison comparison = new Comparison(UUID.fromString(uuidString));
-        comparison.setTag1(tag1);
-        comparison.setTag2(tag2);
+        comparison.setOverweight(tag1);
+        comparison.setUnderweight(tag2);
         comparison.setRatio(ratio);
         comparison.setRank(rank);
 
