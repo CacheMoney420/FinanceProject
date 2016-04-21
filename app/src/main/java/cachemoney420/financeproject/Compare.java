@@ -20,11 +20,11 @@ import yahoofinance.histquotes.Interval;
 public class Compare {
     private static final String TAG = "tag";
 
-    private static Comparator<Pair<Pair<BigDecimal, Integer>, Pair<String, String>>> sPairComparator
-            = new Comparator<Pair<Pair<BigDecimal, Integer>, Pair<String, String>>>() {
+    private static Comparator<Pair<Pair<Double, Integer>, Pair<String, String>>> sPairComparator
+            = new Comparator<Pair<Pair<Double, Integer>, Pair<String, String>>>() {
         @Override
-        public int compare(Pair<Pair<BigDecimal, Integer>, Pair<String, String>> lhs,
-                           Pair<Pair<BigDecimal, Integer>, Pair<String, String>> rhs) {
+        public int compare(Pair<Pair<Double, Integer>, Pair<String, String>> lhs,
+                           Pair<Pair<Double, Integer>, Pair<String, String>> rhs) {
             if (lhs.first.second.equals(rhs.first.second)) {
                 return lhs.first.first.compareTo(rhs.first.first);
             }
@@ -32,10 +32,19 @@ public class Compare {
         }
     };
 
-        public static List<Pair<Pair<BigDecimal, Integer>, Pair<String, String>>> getCompare
+        public static List<Pair<Pair<Double, Integer>, Pair<String, String>>> getCompare
             (String[] over, String[] under) {
 
-        List<Pair<Pair<BigDecimal, Integer>, Pair<String, String>>> ratioList = new ArrayList<>();
+        List<Pair<Pair<Double, Integer>, Pair<String, String>>> ratioList = new ArrayList<>();
+        /*
+        Basic guide to using this thing...
+
+        List<Pair<Pair<Ratio, Rank>, Pair<Over ticker, Under ticker>>>
+        Ratio = specificPair.first.first
+        Rank = specificPair.first.second
+        Over ticker = specificPair.second.first
+        Under ticker = specificPair.second.second
+         */
 
 
             try {
@@ -43,21 +52,21 @@ public class Compare {
                 Calendar to = Calendar.getInstance();
                 from.add(Calendar.YEAR, -1);
                 Map<String, Stock> overMap = YahooFinance.get(over, from, to);
-                Map<String, Stock> underMap = YahooFinance.get(over, from, to);
+                Map<String, Stock> underMap = YahooFinance.get(under, from, to);
 
 
                 for (String o : overMap.keySet()) {
                     for (String u : underMap.keySet()) {
-                        BigDecimal ratio = overMap.get(o).getQuote().getPrice().divide(
+                        Double ratio = overMap.get(o).getQuote().getPrice().divide(
                                 underMap.get(u).getQuote().getPrice(),
                                 BigDecimal.ROUND_CEILING
-                        );
+                        ).doubleValue();
                         List<HistoricalQuote> overQuoteList = overMap.get(o).getHistory(from, to, Interval.DAILY);
                         List<HistoricalQuote> underQuoteList = underMap.get(u).getHistory(from, to, Interval.DAILY);
-                        List<BigDecimal> historyQuotes = new ArrayList<>();
+                        List<Double> historyQuotes = new ArrayList<>();
 
                         for (int quoteIndex = 0; quoteIndex != overQuoteList.size(); quoteIndex++) {
-                            historyQuotes.add(overQuoteList.get(quoteIndex).getAdjClose().divide(underQuoteList.get(quoteIndex).getAdjClose(), BigDecimal.ROUND_CEILING));
+                            historyQuotes.add(overQuoteList.get(quoteIndex).getAdjClose().divide(underQuoteList.get(quoteIndex).getAdjClose(), BigDecimal.ROUND_CEILING).doubleValue());
                         }
                         Collections.sort(historyQuotes);
                         Collections.reverse(historyQuotes);

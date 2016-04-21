@@ -67,7 +67,9 @@ public class CompareTest {
                     List<BigDecimal> historyQuotes = new ArrayList<>();
 
                     for (int quoteIndex = 0; quoteIndex != overQuoteList.size(); quoteIndex++) {
-                        historyQuotes.add(overQuoteList.get(quoteIndex).getAdjClose().divide(underQuoteList.get(quoteIndex).getAdjClose(), BigDecimal.ROUND_CEILING));
+                        historyQuotes.add(overQuoteList.get(quoteIndex).getAdjClose()
+                                .divide(underQuoteList.get(quoteIndex)
+                                        .getAdjClose(), BigDecimal.ROUND_CEILING));
                     }
 //                    for (HistoricalQuote hqOver : overMap.get(o)
 ////                            .getHistory(from, to, Interval.DAILY)) {
