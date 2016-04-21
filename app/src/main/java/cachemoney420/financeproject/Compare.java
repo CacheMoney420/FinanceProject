@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,67 +20,73 @@ import yahoofinance.histquotes.Interval;
 public class Compare {
     private static final String TAG = "tag";
 
-    private static Comparator<Pair<BigDecimal, Integer>> sPairComparator = new Comparator<Pair<BigDecimal, Integer>>() {
+    private static Comparator<Pair<Pair<BigDecimal, Integer>, Pair<String, String>>> sPairComparator
+            = new Comparator<Pair<Pair<BigDecimal, Integer>, Pair<String, String>>>() {
         @Override
-        public int compare(Pair<BigDecimal, Integer> lhs, Pair<BigDecimal, Integer> rhs) {
-            int result = lhs.second.compareTo(rhs.second);
-            if (result != 0) {
-                return result;
-            } else {
-                return lhs.first.compareTo(rhs.first);
+        public int compare(Pair<Pair<BigDecimal, Integer>, Pair<String, String>> lhs,
+                           Pair<Pair<BigDecimal, Integer>, Pair<String, String>> rhs) {
+            if (lhs.first.second.equals(rhs.first.second)) {
+                return lhs.first.first.compareTo(rhs.first.first);
             }
+            return lhs.first.second.compareTo(rhs.first.second);
         }
     };
 
-    public static HashMap<Pair<BigDecimal, Integer>, String> getCompare(String[] over, String[] under) {
+        public static List<Pair<Pair<BigDecimal, Integer>, Pair<String, String>>> getCompare
+            (String[] over, String[] under) {
 
-        HashMap<Pair<BigDecimal, Integer>, String> ratioMap =
-                new HashMap<>();
-
-
-        try {
-            Calendar from = Calendar.getInstance();
-            Calendar to = Calendar.getInstance();
-            from.add(Calendar.YEAR, -1);
-            Map<String, Stock> overMap = YahooFinance.get(over, from, to);
-            Map<String, Stock> underMap = YahooFinance.get(under, from, to);
+        List<Pair<Pair<BigDecimal, Integer>, Pair<String, String>>> ratioList = new ArrayList<>();
 
 
-            for (String o : overMap.keySet()) {
-                for (String u : underMap.keySet()) {
-                    BigDecimal ratio = overMap.get(o).getQuote().getPrice().divide(
-                            underMap.get(u).getQuote().getPrice(),
-                            BigDecimal.ROUND_CEILING
-                    );
-                    List<BigDecimal> quoteList = new ArrayList<>();
-                    for (HistoricalQuote hq : underMap.get(u).getHistory(from, to, Interval.DAILY)) {
-                        quoteList.add(hq.getAdjClose());
-                    }
-                    Collections.sort(quoteList);
-                    Collections.reverse(quoteList);
-                    boolean found = false;
-                    for (Integer rank = 0; rank == quoteList.size() - 1; rank++) {
-                        if (ratio.compareTo(quoteList.get(rank)) == 1) {
-                            ratioMap.put(new Pair<>(ratio, rank), o + " vs " + u);
-                            found = true;
-                            break;
+            try {
+                Calendar from = Calendar.getInstance();
+                Calendar to = Calendar.getInstance();
+                from.add(Calendar.YEAR, -1);
+                Map<String, Stock> overMap = YahooFinance.get(over, from, to);
+                Map<String, Stock> underMap = YahooFinance.get(over, from, to);
+
+
+                for (String o : overMap.keySet()) {
+                    for (String u : underMap.keySet()) {
+                        BigDecimal ratio = overMap.get(o).getQuote().getPrice().divide(
+                                underMap.get(u).getQuote().getPrice(),
+                                BigDecimal.ROUND_CEILING
+                        );
+                        List<HistoricalQuote> overQuoteList = overMap.get(o).getHistory(from, to, Interval.DAILY);
+                        List<HistoricalQuote> underQuoteList = underMap.get(u).getHistory(from, to, Interval.DAILY);
+                        List<BigDecimal> historyQuotes = new ArrayList<>();
+
+                        for (int quoteIndex = 0; quoteIndex != overQuoteList.size(); quoteIndex++) {
+                            historyQuotes.add(overQuoteList.get(quoteIndex).getAdjClose().divide(underQuoteList.get(quoteIndex).getAdjClose(), BigDecimal.ROUND_CEILING));
+                        }
+                        Collections.sort(historyQuotes);
+                        Collections.reverse(historyQuotes);
+                        boolean found = false;
+                        for (Integer rank = 0; rank != historyQuotes.size() - 1; rank++) {
+                            if (ratio.compareTo(historyQuotes.get(rank)) == 1) {
+                                ratioList.add(Pair.create(Pair.create(ratio, rank), Pair.create(o, u)));
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            ratioList.add(
+                                    Pair.create(Pair.create(ratio, historyQuotes.size()), Pair.create(o, u))
+                            );
                         }
                     }
-                    if (!found) {
-                        ratioMap.put(new Pair<>(ratio, quoteList.size()), o + " vs " + u);
-                    }
                 }
+            } catch (IOException ioe) {
+                Log.d(TAG, ioe.getMessage());
             }
-        } catch (IOException ioe) {
-            Log.d(TAG, ioe.getMessage());
-        }
-        return ratioMap;
-
+            Collections.sort(ratioList, sPairComparator);
+            Collections.reverse(ratioList);
+            return ratioList;
     }
-    public static List<Pair<BigDecimal, Integer>> sortCompares(HashMap<Pair<BigDecimal, Integer>, String> ratioMap) {
-        List<Pair<BigDecimal, Integer>> ratioList = new ArrayList<>(ratioMap.keySet());
-        Collections.sort(ratioList, sPairComparator);
-        Collections.reverse(ratioList);
-        return ratioList;
-    }
+//    public static List<Pair<BigDecimal, Integer>> sortCompares(HashMap<Pair<BigDecimal, Integer>, String> ratioMap) {
+//        List<Pair<BigDecimal, Integer>> ratioList = new ArrayList<>(ratioMap.keySet());
+//        Collections.sort(ratioList, sPairComparator);
+//        Collections.reverse(ratioList);
+//        return ratioList;
+//    }
 }
