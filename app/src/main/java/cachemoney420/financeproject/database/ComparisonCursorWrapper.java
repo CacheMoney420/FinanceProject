@@ -3,6 +3,7 @@ package cachemoney420.financeproject.database;
 import android.database.Cursor;
 import android.database.CursorWrapper;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 import cachemoney420.financeproject.database.ComparisonDbSchema.ComparisonTable;
 import cachemoney420.financeproject.Comparison;
@@ -14,16 +15,14 @@ public class ComparisonCursorWrapper extends CursorWrapper {
 
     public Comparison getComparison() {
         String uuidString = getString(getColumnIndex(ComparisonTable.Cols.UUID));
-        String tag1 = getString(getColumnIndex(ComparisonTable.Cols.TAG1));
-        String tag2 = getString(getColumnIndex(ComparisonTable.Cols.TAG2));
-        String ratio = getString(getColumnIndex(ComparisonTable.Cols.RATIO));
-        String rank = getString(getColumnIndex(ComparisonTable.Cols.RANK));
+        String over = getString(getColumnIndex(ComparisonTable.Cols.OVER));
+        String under = getString(getColumnIndex(ComparisonTable.Cols.UNDER));
+        Double ratio = getDouble(getColumnIndex(ComparisonTable.Cols.RATIO));
 
         Comparison comparison = new Comparison(UUID.fromString(uuidString));
-        comparison.setOverweight(tag1);
-        comparison.setUnderweight(tag2);
+        comparison.setOverweight(over);
+        comparison.setUnderweight(under);
         comparison.setRatio(ratio);
-        comparison.setRank(rank);
 
         return comparison;
     }

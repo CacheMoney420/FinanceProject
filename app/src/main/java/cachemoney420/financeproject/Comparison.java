@@ -1,5 +1,6 @@
 package cachemoney420.financeproject;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 public class Comparison {
@@ -7,8 +8,8 @@ public class Comparison {
     private UUID mId;
     private String mOverweight;
     private String mUnderweight;
-    private String mRatio;
-    private String mRank;
+    private Double mRatio;
+    private Integer mRank;
 
     public Comparison(){
         this(UUID.randomUUID());
@@ -38,20 +39,19 @@ public class Comparison {
         mUnderweight = underweight;
     }
 
-    public String getRatio() {
+    public Double getRatio() {
         return mRatio;
     }
 
-    public void setRatio(String ratio) {
+    public void setRatio(Double ratio) {
         mRatio = ratio;
     }
 
-    public String getRank() {
+    public Integer getRank() {
         return mRank;
     }
 
-    public void setRank(String rank) {
+    public void setRank(Integer rank) {
         mRank = rank;
     }
-
 }

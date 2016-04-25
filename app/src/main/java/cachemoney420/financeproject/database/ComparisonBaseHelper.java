@@ -17,10 +17,9 @@ public class ComparisonBaseHelper extends SQLiteOpenHelper {
         db.execSQL("create table " + ComparisonDbSchema.ComparisonTable.NAME + "(" +
         " _id integer primary key autoincrement, " +
                 ComparisonDbSchema.ComparisonTable.Cols.UUID + ", " +
-                ComparisonDbSchema.ComparisonTable.Cols.TAG1 + ", " +
-                ComparisonDbSchema.ComparisonTable.Cols.TAG2 + ", " +
-                ComparisonDbSchema.ComparisonTable.Cols.RATIO+ ", " +
-                ComparisonDbSchema.ComparisonTable.Cols.RANK + ")"
+                ComparisonDbSchema.ComparisonTable.Cols.OVER + ", " +
+                ComparisonDbSchema.ComparisonTable.Cols.UNDER + ", " +
+                ComparisonDbSchema.ComparisonTable.Cols.RATIO+ ")"
         );
     }
 
