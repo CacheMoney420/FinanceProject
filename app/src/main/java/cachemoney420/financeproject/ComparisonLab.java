@@ -23,16 +23,6 @@ public class ComparisonLab {
         if (sComparisonLab == null) {
             sComparisonLab = new ComparisonLab(context);
         }
-        for (int i=0; i < 10; i++) {
-            Comparison c = new Comparison();
-
-            c.setOverweight("abc" + i);
-            c.setUnderweight("def" + i);
-            String r = Float.toString(i/2);
-            c.setRatio(r);
-            c.setRank(Integer.toString(i+1));
-            sComparisonLab.addComparison(c);
-        }
 
         return sComparisonLab;
     }
@@ -86,10 +76,9 @@ public class ComparisonLab {
     private static ContentValues getContentValues(Comparison comparison) {
         ContentValues values = new ContentValues();
         values.put(ComparisonTable.Cols.UUID, comparison.getId().toString());
-        values.put(ComparisonTable.Cols.TAG1, comparison.getOverweight().toString());
-        values.put(ComparisonTable.Cols.TAG2, comparison.getUnderweight().toString());
+        values.put(ComparisonTable.Cols.OVER, comparison.getOverweight().toString());
+        values.put(ComparisonTable.Cols.UNDER, comparison.getUnderweight().toString());
         values.put(ComparisonTable.Cols.RATIO, comparison.getRatio().toString());
-        values.put(ComparisonTable.Cols.RANK, comparison.getRank().toString());
 
         return values;
     }
