@@ -43,16 +43,16 @@ public class Compare {
                 Calendar from = Calendar.getInstance();
                 Calendar to = Calendar.getInstance();
                 from.add(Calendar.YEAR, -1);
-                Map<String, Stock> overMap = YahooFinance.get(params[0], from, to);
-                Map<String, Stock> underMap = YahooFinance.get(params[1], from, to);
+                Map<String, Stock> overMap = YahooFinance.get(params[0], Interval.DAILY);
+                Map<String, Stock> underMap = YahooFinance.get(params[1], Interval.DAILY);
                 for (String o : overMap.keySet()) {
                     for (String u : underMap.keySet()) {
                         Double ratio = overMap.get(o).getQuote().getPrice().divide(
                                 underMap.get(u).getQuote().getPrice(),
                                 BigDecimal.ROUND_CEILING
                         ).doubleValue();
-                        List<HistoricalQuote> overQuoteList = overMap.get(o).getHistory(from, to, Interval.DAILY);
-                        List<HistoricalQuote> underQuoteList = underMap.get(u).getHistory(Interval.DAILY);
+                        List<HistoricalQuote> overQuoteList = overMap.get(o).getHistory();
+                        List<HistoricalQuote> underQuoteList = underMap.get(u).getHistory();
                         List<Double> historyQuotes = new ArrayList<>();
 
                         for (int quoteIndex = 0; quoteIndex != overQuoteList.size(); quoteIndex++) {
