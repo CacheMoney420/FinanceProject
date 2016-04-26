@@ -2,7 +2,7 @@ package cachemoney420.financeproject;
 
 import android.content.Intent;
 import android.support.v4.app.Fragment;
-import cachemoney420.financeproject.Pair;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.os.Bundle;
@@ -10,8 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -34,22 +32,22 @@ public class FinanceActivity extends Fragment {
         mComparisonRecyclerView = (RecyclerView) view.findViewById(R.id.comparison_recycler_view);
         mComparisonRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        String[] list1 = {"WMT", "TGT", "SAMS"};
-        String[] list2 = {"MCD", "BUD", "BKW"};
+        String[] list1 = {"WMT", "TGT", "AAL"};
+        String[] list2 = {"MCD", "BUD", "AXP"};
 
-//        Compare compare = new Compare();
-//        List<Pair<Pair<Double, Integer>, Pair<String, String>>> comp = compare.getCompare(list1, list2);
-//
-//        for (int i = 0; i < comp.size(); i++) {
-//            Comparison c = new Comparison();
-//            c.setOverweight(comp.get(i).second.first);
-//            c.setUnderweight(comp.get(i).second.second);
-//            c.setRatio(comp.get(i).first.first);
-//            c.setRank(comp.get(i).first.second);
-//            addComparison(c);
-//        }
+        Compare compare = new Compare();
+        List<Pair<Pair<Double, Integer>, Pair<String, String>>> comp = compare.getCompare(list1, list2);
 
-        List<Pair<Pair<Double,Integer>,Pair<String,String>>> test = new ArrayList<Pair<Pair<Double,Integer>,Pair<String,String>>>();
+        for (int i = 0; i < comp.size(); i++) {
+            Comparison c = new Comparison();
+            c.setOverweight(comp.get(i).second.first);
+            c.setUnderweight(comp.get(i).second.second);
+            c.setRatio(comp.get(i).first.first);
+            c.setRank(comp.get(i).first.second);
+            addComparison(c);
+        }
+
+/*        List<Pair<Pair<Double,Integer>,Pair<String,String>>> test = new ArrayList<Pair<Pair<Double,Integer>,Pair<String,String>>>();
 
         for (int i = 0; i < 10; i++) {
             Comparison c = new Comparison();
@@ -61,7 +59,7 @@ public class FinanceActivity extends Fragment {
             c.setRatio(test.get(i).getLeft().getLeft());
             c.setRank(test.get(i).getLeft().getRight());
             addComparison(c);
-        }
+        }*/
 
         return view;
     }
@@ -111,7 +109,7 @@ public class FinanceActivity extends Fragment {
         public void bindComparison(Comparison comparison) {
             mComparison = comparison;
             mTitle.setText(mComparison.getOverweight() + " vs " + mComparison.getUnderweight());
-            mRank.setText(mComparison.getRank() + " | " + mComparison.getRatio());
+            mRank.setText("Rank: " + mComparison.getRank() + " | Exchange Rate: " + mComparison.getRatio());
         }
 
         @Override
