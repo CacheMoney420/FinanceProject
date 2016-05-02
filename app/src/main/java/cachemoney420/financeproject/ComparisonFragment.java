@@ -58,7 +58,7 @@ public class ComparisonFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         UUID comparisonId = (UUID) getArguments().getSerializable(ARG_FINANCE_ID);
-        mComparison = ComparisonLab.get(getActivity()).getComparison(comparisonId);
+        mComparison = ComparisonList.get(getActivity()).getComparison(comparisonId);
     }
 
     @Override

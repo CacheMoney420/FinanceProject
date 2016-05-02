@@ -64,7 +64,6 @@ public class Compare {
                     }
                 }
             Collections.sort(ratioList, sPairComparator);
-            Collections.reverse(ratioList);
             } catch (IOException ioe) {
                 this.cancel(true);
             }
