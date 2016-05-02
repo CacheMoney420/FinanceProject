@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">FinanceProject</string>
+    <string name="add_ticker">Add ticker...</string>
 </resources>

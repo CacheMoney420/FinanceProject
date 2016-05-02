@@ -18,8 +18,7 @@ public class ComparisonBaseHelper extends SQLiteOpenHelper {
         " _id integer primary key autoincrement, " +
                 ComparisonDbSchema.ComparisonTable.Cols.UUID + ", " +
                 ComparisonDbSchema.ComparisonTable.Cols.OVER + ", " +
-                ComparisonDbSchema.ComparisonTable.Cols.UNDER + ", " +
-                ComparisonDbSchema.ComparisonTable.Cols.RATIO+ ")"
+                ComparisonDbSchema.ComparisonTable.Cols.UNDER+ ")"
         );
     }
 
