@@ -1,6 +1,8 @@
 package cachemoney420.financeproject;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,19 +12,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 import java.util.List;
+
+import cachemoney420.financeproject.database.ComparisonBaseHelper;
+import cachemoney420.financeproject.database.ComparisonDbSchema;
 
 
 public class FinanceActivity extends Fragment {
 
     private RecyclerView mComparisonRecyclerView;
     private ComparisonAdapter mAdapter;
+    private List<Comparison> mComparisons;
+    private SQLiteDatabase mDatabase;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        mDatabase = new ComparisonBaseHelper(this.getActivity()).getWritableDatabase();
      }
 
     @Override
@@ -31,6 +41,8 @@ public class FinanceActivity extends Fragment {
 
         mComparisonRecyclerView = (RecyclerView) view.findViewById(R.id.comparison_recycler_view);
         mComparisonRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        updateUI();
 
         String[] list1 = {"WMT", "TGT", "AAL"};
         String[] list2 = {"MCD", "BUD", "AXP"};
@@ -47,20 +59,6 @@ public class FinanceActivity extends Fragment {
             addComparison(c);
         }
 
-/*        List<Pair<Pair<Double,Integer>,Pair<String,String>>> test = new ArrayList<Pair<Pair<Double,Integer>,Pair<String,String>>>();
-
-        for (int i = 0; i < 10; i++) {
-            Comparison c = new Comparison();
-            Pair a = new Pair(5.00/(i+1), 1);
-            Pair b = new Pair("abc" + i, "def" + i);
-            test.add(new Pair(a, b));
-            c.setOverweight(test.get(i).getRight().getLeft());
-            c.setUnderweight(test.get(i).getRight().getRight());
-            c.setRatio(test.get(i).getLeft().getLeft());
-            c.setRank(test.get(i).getLeft().getRight());
-            addComparison(c);
-        }*/
-
         return view;
     }
 
@@ -76,20 +74,21 @@ public class FinanceActivity extends Fragment {
     }
 
     private void updateUI() {
-        ComparisonLab comparisonLab = ComparisonLab.get(getActivity());
-        List<Comparison> comparisons = comparisonLab.getComparisons();
 
         if (mAdapter == null) {
-            mAdapter = new ComparisonAdapter(comparisons);
+            mAdapter = new ComparisonAdapter(mComparisons);
             mComparisonRecyclerView.setAdapter(mAdapter);
         } else {
-            mAdapter.setComparisons(comparisons);
+            mAdapter.setComparisons(mComparisons);
             mAdapter.notifyDataSetChanged();
         }
     }
 
     private void addComparison(Comparison comparison) {
-        ComparisonLab.get(getActivity()).addComparison(comparison);
+        mComparisons.add(comparison);
+        ComparisonList.get(getActivity()).addComparison(comparison);
+        ContentValues values = getContentValues(comparison);
+        mDatabase.insert(ComparisonDbSchema.ComparisonTable.NAME, null, values);
     }
 
     private class ComparisonHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -121,10 +120,11 @@ public class FinanceActivity extends Fragment {
 
     private class ComparisonAdapter extends RecyclerView.Adapter<ComparisonHolder> {
 
-        private List<Comparison> mComparisons;
-
         public ComparisonAdapter(List<Comparison> comparisons) {
-            mComparisons = comparisons;
+            if (comparisons == null) {
+                comparisons = new ArrayList<>();
+            }
+                        mComparisons = comparisons;
         }
 
         @Override
@@ -148,5 +148,15 @@ public class FinanceActivity extends Fragment {
         public void setComparisons(List<Comparison> comparisons) {
             mComparisons = comparisons;
         }
+    }
+
+    private static ContentValues getContentValues(Comparison comparison) {
+        ContentValues values = new ContentValues();
+        values.put(ComparisonDbSchema.ComparisonTable.Cols.UUID, comparison.getId().toString());
+        values.put(ComparisonDbSchema.ComparisonTable.Cols.OVER, comparison.getOverweight().toString());
+        values.put(ComparisonDbSchema.ComparisonTable.Cols.UNDER, comparison.getUnderweight().toString());
+        values.put(ComparisonDbSchema.ComparisonTable.Cols.RATIO, comparison.getRatio().toString());
+
+        return values;
     }
 }

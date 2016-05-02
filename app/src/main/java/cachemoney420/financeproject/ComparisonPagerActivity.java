@@ -33,7 +33,7 @@ public class ComparisonPagerActivity extends AppCompatActivity {
 
         mViewPager = (ViewPager) findViewById(R.id.activity_comparison_pager_view_pager);
 
-        mComparisons = ComparisonLab.get(this).getComparisons();
+        mComparisons = ComparisonList.get(this).getComparisons();
         FragmentManager fragmentManager = getSupportFragmentManager();
         mViewPager.setAdapter(new FragmentStatePagerAdapter(fragmentManager) {
 

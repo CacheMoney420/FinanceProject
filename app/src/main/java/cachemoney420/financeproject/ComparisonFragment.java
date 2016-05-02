@@ -1,20 +1,17 @@
 package cachemoney420.financeproject;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
 import java.util.UUID;
 
 public class ComparisonFragment extends Fragment {
 
     private static final String ARG_FINANCE_ID = "finance_id";
-
+    private SQLiteDatabase mDatabase;
     private Comparison mComparison;
 
     public static ComparisonFragment newInstance(UUID financeId) {
@@ -30,7 +27,7 @@ public class ComparisonFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         UUID comparisonId = (UUID) getArguments().getSerializable(ARG_FINANCE_ID);
-        mComparison = ComparisonLab.get(getActivity()).getComparison(comparisonId);
+        mComparison = ComparisonList.get(getActivity()).getComparison(comparisonId);
     }
 
     @Override
