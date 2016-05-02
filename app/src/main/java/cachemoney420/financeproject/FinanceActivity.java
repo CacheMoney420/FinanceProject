@@ -1,16 +1,22 @@
 package cachemoney420.financeproject;
 
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -26,6 +32,7 @@ public class FinanceActivity extends Fragment {
     private ComparisonAdapter mAdapter;
     private List<Comparison> mComparisons;
     private SQLiteDatabase mDatabase;
+    private EditText mTicker;
 
 
     @Override
@@ -73,6 +80,87 @@ public class FinanceActivity extends Fragment {
         super.onSaveInstanceState(outState);
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.activity_finance, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_item_add_ticker:
+                new AlertDialog.Builder(getActivity())
+                        .setTitle("Add ticker...")
+                        .setPositiveButton("Underweight", new DialogInterface.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+                                View promptsView = layoutInflater.inflate(R.layout.prompts, null);
+
+                                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+
+                                alertDialogBuilder.setView(promptsView);
+
+                                final EditText userInput = (EditText) promptsView.findViewById(R.id.editTextDialogUserInput);
+
+                                alertDialogBuilder
+                                        .setCancelable(false)
+                                        .setPositiveButton("Add",
+                                                new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialog,int id) {
+                                                        mTicker.setText(userInput.getText());
+                                                    }
+                                                })
+                                        .setNegativeButton("Cancel",
+                                                new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialog,int id) {
+                                                        dialog.cancel();
+                                                    }
+                                                })
+                                        .show();
+
+                            }
+                        })
+                        .setNegativeButton("Overweight", new DialogInterface.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+                                View promptsView = layoutInflater.inflate(R.layout.prompts, null);
+
+                                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+
+                                alertDialogBuilder.setView(promptsView);
+
+                                final EditText userInput = (EditText) promptsView.findViewById(R.id.editTextDialogUserInput);
+
+                                alertDialogBuilder
+                                        .setCancelable(false)
+                                        .setPositiveButton("Add",
+                                                new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialog,int id) {
+                                                        mTicker.setText(userInput.getText());
+                                                    }
+                                                })
+                                        .setNegativeButton("Cancel",
+                                                new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialog,int id) {
+                                                        dialog.cancel();
+                                                    }
+                                                })
+                                        .show();
+
+                            }
+                        })
+                        .show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     private void updateUI() {
 
         if (mAdapter == null) {
@@ -87,8 +175,8 @@ public class FinanceActivity extends Fragment {
     private void addComparison(Comparison comparison) {
         mComparisons.add(comparison);
         ComparisonList.get(getActivity()).addComparison(comparison);
-        ContentValues values = getContentValues(comparison);
-        mDatabase.insert(ComparisonDbSchema.ComparisonTable.NAME, null, values);
+//        ContentValues values = getContentValues(comparison);
+//        mDatabase.insert(ComparisonDbSchema.ComparisonTable.NAME, null, values);
     }
 
     private class ComparisonHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -155,7 +243,6 @@ public class FinanceActivity extends Fragment {
         values.put(ComparisonDbSchema.ComparisonTable.Cols.UUID, comparison.getId().toString());
         values.put(ComparisonDbSchema.ComparisonTable.Cols.OVER, comparison.getOverweight().toString());
         values.put(ComparisonDbSchema.ComparisonTable.Cols.UNDER, comparison.getUnderweight().toString());
-        values.put(ComparisonDbSchema.ComparisonTable.Cols.RATIO, comparison.getRatio().toString());
 
         return values;
     }

@@ -8,7 +8,6 @@ public class ComparisonDbSchema {
             public static final String UUID = "uuid";
             public static final String OVER = "over";
             public static final String UNDER = "under";
-            public static final String RATIO = "ratio";
         }
     }
 }
