@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -40,9 +39,6 @@ public class Compare {
         protected List<Pair<Pair<Double, Integer>, Pair<String, String>>> doInBackground(String[]... params) {
             List<Pair<Pair<Double, Integer>, Pair<String, String>>> ratioList = new ArrayList<>();
             try {
-                Calendar from = Calendar.getInstance();
-                Calendar to = Calendar.getInstance();
-                from.add(Calendar.YEAR, -1);
                 Map<String, Stock> overMap = YahooFinance.get(params[0], Interval.DAILY);
                 Map<String, Stock> underMap = YahooFinance.get(params[1], Interval.DAILY);
                 for (String o : overMap.keySet()) {
@@ -51,15 +47,7 @@ public class Compare {
                                 underMap.get(u).getQuote().getPrice(),
                                 BigDecimal.ROUND_CEILING
                         ).doubleValue();
-                        List<HistoricalQuote> overQuoteList = overMap.get(o).getHistory();
-                        List<HistoricalQuote> underQuoteList = underMap.get(u).getHistory();
-                        List<Double> historyQuotes = new ArrayList<>();
-
-                        for (int quoteIndex = 0; quoteIndex != overQuoteList.size(); quoteIndex++) {
-                            historyQuotes.add(overQuoteList.get(quoteIndex).getAdjClose().divide(underQuoteList.get(quoteIndex).getAdjClose(), BigDecimal.ROUND_CEILING).doubleValue());
-                        }
-                        Collections.sort(historyQuotes);
-                        Collections.reverse(historyQuotes);
+                        List<Double> historyQuotes = getHistoryRatio(overMap.get(o), underMap.get(u), true);
                         boolean found = false;
                         for (Integer rank = 0; rank != historyQuotes.size() - 1; rank++) {
                             if (ratio.compareTo(historyQuotes.get(rank)) == 1) {
@@ -82,6 +70,24 @@ public class Compare {
             }
             return ratioList;
         }
+    }
+    public static List<Double> getHistoryRatio(Stock over, Stock under, Boolean sorted) {
+        List<Double> historyQuotes = new ArrayList<>();
+        try {
+            List<HistoricalQuote> overQuoteList = over.getHistory();
+            List<HistoricalQuote> underQuoteList = under.getHistory();
+
+            for (int quoteIndex = 0; quoteIndex != overQuoteList.size(); quoteIndex++) {
+                historyQuotes.add(overQuoteList.get(quoteIndex).getAdjClose().divide(underQuoteList.get(quoteIndex).getAdjClose(), BigDecimal.ROUND_CEILING).doubleValue());
+            }
+            if (sorted) {
+                Collections.sort(historyQuotes);
+            }
+            Collections.reverse(historyQuotes);
+        } catch (IOException ioe) {
+            Log.e(TAG, "Connection Failed", ioe);
+        }
+        return historyQuotes;
     }
 
     public static List<Pair<Pair<Double, Integer>, Pair<String, String>>> getCompare
