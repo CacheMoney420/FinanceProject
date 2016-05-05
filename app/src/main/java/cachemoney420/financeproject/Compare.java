@@ -6,6 +6,7 @@ import android.util.Log;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -38,6 +39,7 @@ public class Compare {
         @Override
         protected List<Pair<Pair<Double, Integer>, Pair<String, String>>> doInBackground(String[]... params) {
             List<Pair<Pair<Double, Integer>, Pair<String, String>>> ratioList = new ArrayList<>();
+            DecimalFormat df = new DecimalFormat("#.00");
             try {
                 Map<String, Stock> overMap = YahooFinance.get(params[0], Interval.DAILY);
                 Map<String, Stock> underMap = YahooFinance.get(params[1], Interval.DAILY);
@@ -51,12 +53,14 @@ public class Compare {
                         boolean found = false;
                         for (Integer rank = 0; rank != historyQuotes.size() - 1; rank++) {
                             if (ratio.compareTo(historyQuotes.get(rank)) == 1) {
+                                ratio = Double.parseDouble(df.format(ratio));
                                 ratioList.add(Pair.create(Pair.create(ratio, rank), Pair.create(o, u)));
                                 found = true;
                                 break;
                             }
                         }
                         if (!found) {
+                            ratio = Double.parseDouble(df.format(ratio));
                             ratioList.add(
                                     Pair.create(Pair.create(ratio, historyQuotes.size()), Pair.create(o, u))
                             );

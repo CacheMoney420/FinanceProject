@@ -118,7 +118,6 @@ public class ComparisonFragment extends Fragment {
         @Override
         protected void onPostExecute(List<Double> result) {
             mRatioList = result;
-            System.out.println(mRatioList);
             DataPoint[] data = new DataPoint[mRatioList.size()];
             double x = 0;
             for (int index = 0; index < mRatioList.size(); index++) {
