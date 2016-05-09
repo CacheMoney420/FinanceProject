@@ -3,9 +3,16 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/button_material_dark</item>
+        <item name="colorPrimaryDark">@color/bright_foreground_material_light</item>
+        <item name="colorAccent">@color/accent_material_dark</item>
+        <item name="android:colorBackground">@color/background_material_dark</item>
+        <item name="android:colorForeground">@color/foreground_material_dark</item>
+        <item name="android:textColorSecondary">@color/abc_primary_text_material_dark</item>
+        <item name="android:textColorPrimaryInverse">@color/abc_primary_text_material_dark</item>
+        <item name="android:textColorPrimary">@color/abc_primary_text_material_dark</item>
+        <item name="android:textColorSecondaryInverse">@color/abc_secondary_text_material_dark
+        </item>
+        <item name="android:textColorTertiary">@color/abc_secondary_text_material_dark</item>
     </style>
-
 </resources>
