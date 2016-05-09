@@ -1,6 +1,5 @@
 package cachemoney420.financeproject;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 public class Comparison {

@@ -1,12 +1,11 @@
 package cachemoney420.financeproject;
 
 import android.content.ContentValues;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.util.Pair;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.os.Bundle;
@@ -28,12 +27,17 @@ import cachemoney420.financeproject.database.ComparisonDbSchema;
 
 public class FinanceActivity extends Fragment {
 
+    private static final String DIALOG_ADD = "DialogAdd";
+
+    private static final int REQUEST_TICKER = 0;
+
     private RecyclerView mComparisonRecyclerView;
     private ComparisonAdapter mAdapter;
     private List<Comparison> mComparisons;
     private SQLiteDatabase mDatabase;
     private EditText mTicker;
-
+    private ArrayList<String> mOver;
+    private ArrayList<String> mUnder;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,11 +55,11 @@ public class FinanceActivity extends Fragment {
 
         updateUI();
 
-        String[] list1 = {"WMT", "TGT", "AAL"};
-        String[] list2 = {"MCD", "BUD", "AXP"};
+        String[] over = {"WMT", "TGT", "AAL"};
+        String[] under = {"MCD", "BUD", "AXP"};
 
         Compare compare = new Compare();
-        List<Pair<Pair<Double, Integer>, Pair<String, String>>> comp = compare.getCompare(list1, list2);
+        List<Pair<Pair<Double, Integer>, Pair<String, String>>> comp = compare.getCompare(over, under);
 
         for (int i = 0; i < comp.size(); i++) {
             Comparison c = new Comparison();
@@ -90,71 +94,10 @@ public class FinanceActivity extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_item_add_ticker:
-                new AlertDialog.Builder(getActivity())
-                        .setTitle("Add ticker...")
-                        .setPositiveButton("Underweight", new DialogInterface.OnClickListener()
-                        {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
-                                View promptsView = layoutInflater.inflate(R.layout.prompts, null);
-
-                                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-
-                                alertDialogBuilder.setView(promptsView);
-
-                                final EditText userInput = (EditText) promptsView.findViewById(R.id.editTextDialogUserInput);
-
-                                alertDialogBuilder
-                                        .setCancelable(false)
-                                        .setPositiveButton("Add",
-                                                new DialogInterface.OnClickListener() {
-                                                    public void onClick(DialogInterface dialog,int id) {
-                                                        mTicker.setText(userInput.getText());
-                                                    }
-                                                })
-                                        .setNegativeButton("Cancel",
-                                                new DialogInterface.OnClickListener() {
-                                                    public void onClick(DialogInterface dialog,int id) {
-                                                        dialog.cancel();
-                                                    }
-                                                })
-                                        .show();
-
-                            }
-                        })
-                        .setNegativeButton("Overweight", new DialogInterface.OnClickListener()
-                        {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
-                                View promptsView = layoutInflater.inflate(R.layout.prompts, null);
-
-                                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-
-                                alertDialogBuilder.setView(promptsView);
-
-                                final EditText userInput = (EditText) promptsView.findViewById(R.id.editTextDialogUserInput);
-
-                                alertDialogBuilder
-                                        .setCancelable(false)
-                                        .setPositiveButton("Add",
-                                                new DialogInterface.OnClickListener() {
-                                                    public void onClick(DialogInterface dialog,int id) {
-                                                        mTicker.setText(userInput.getText());
-                                                    }
-                                                })
-                                        .setNegativeButton("Cancel",
-                                                new DialogInterface.OnClickListener() {
-                                                    public void onClick(DialogInterface dialog,int id) {
-                                                        dialog.cancel();
-                                                    }
-                                                })
-                                        .show();
-
-                            }
-                        })
-                        .show();
+                FragmentManager manager = getFragmentManager();
+                AddDialog dialog = AddDialog.newInstance();
+                dialog.setTargetFragment(FinanceActivity.this, REQUEST_TICKER);
+                dialog.show(manager, DIALOG_ADD);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -175,8 +118,8 @@ public class FinanceActivity extends Fragment {
     private void addComparison(Comparison comparison) {
         mComparisons.add(comparison);
         ComparisonList.get(getActivity()).addComparison(comparison);
-//        ContentValues values = getContentValues(comparison);
-//        mDatabase.insert(ComparisonDbSchema.ComparisonTable.NAME, null, values);
+        ContentValues values = getContentValues(comparison);
+        mDatabase.insert(ComparisonDbSchema.ComparisonTable.NAME, null, values);
     }
 
     private class ComparisonHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

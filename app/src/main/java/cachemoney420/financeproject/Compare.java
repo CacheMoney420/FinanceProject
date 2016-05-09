@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -74,6 +73,7 @@ public class Compare {
             return ratioList;
         }
     }
+
     public static List<Double> getHistoryRatio(Stock over, Stock under, Boolean sorted) {
         List<Double> historyQuotes = new ArrayList<>();
         try {
