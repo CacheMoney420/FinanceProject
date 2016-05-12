@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FinanceProject</string>
+    <string name="app_name">Mutual Fun</string>
     <string name="add_ticker">Add ticker...</string>
     <string name="rank">Rank: </string>
     <string name="ratio">Ratio:</string>
