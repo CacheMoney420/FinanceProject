@@ -1,7 +1,9 @@
 package cachemoney420.financeproject;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
@@ -11,16 +13,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
-import java.util.ArrayList;
-
 public class AddDialog extends DialogFragment {
 
     public static final String EXTRA_TICKER = "ticker";
-    public static final int OU = 0;
+    public static final String EXTRA_OU = "0";
 
     private EditText mTicker;
-    private ArrayList<String> mOver;
-    private ArrayList<String> mUnder;
+    private String newTag;
 
     public static AddDialog newInstance() {
         Bundle args = new Bundle();
@@ -38,14 +37,10 @@ public class AddDialog extends DialogFragment {
                 {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
-                        View promptsView = layoutInflater.inflate(R.layout.prompts, null);
+                        View v = LayoutInflater.from(getActivity()).inflate(R.layout.prompts, null);
 
-                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-
-                        alertDialogBuilder.setView(promptsView);
-
-                        mTicker = (EditText) promptsView.findViewById(R.id.editTextDialogUserInput);
+                        mTicker = (EditText) v.findViewById(R.id.editTextDialogUserInput);
+                        mTicker.setText(newTag);
                         mTicker.addTextChangedListener(new TextWatcher() {
                             @Override
                             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -53,7 +48,7 @@ public class AddDialog extends DialogFragment {
 
                             @Override
                             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                                mTicker.setText(s);
+                                newTag = s.toString();
                             }
 
                             @Override
@@ -61,12 +56,14 @@ public class AddDialog extends DialogFragment {
                             }
                         });
 
-                        alertDialogBuilder
+                        new AlertDialog.Builder(getActivity())
+                                .setView(v)
+                                .setTitle("Enter ticker:")
                                 .setCancelable(false)
                                 .setPositiveButton("Add",
                                         new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog,int id) {
-                                                mUnder.add(mTicker.toString());
+                                                sendTicker(Activity.RESULT_OK, mTicker.toString() + "0");
                                             }
                                         })
                                 .setNegativeButton("Cancel",
@@ -83,22 +80,18 @@ public class AddDialog extends DialogFragment {
                 {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
-                        View promptsView = layoutInflater.inflate(R.layout.prompts, null);
+                        View v = LayoutInflater.from(getActivity()).inflate(R.layout.prompts, null);
 
-                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-
-                        alertDialogBuilder.setView(promptsView);
-
-                        final EditText userInput = (EditText) promptsView.findViewById(R.id.editTextDialogUserInput);
-                        userInput.addTextChangedListener(new TextWatcher() {
+                        mTicker = (EditText) v.findViewById(R.id.editTextDialogUserInput);
+                        mTicker.setText(newTag);
+                        mTicker.addTextChangedListener(new TextWatcher() {
                             @Override
                             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                             }
 
                             @Override
                             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                                userInput.setText(s);
+                                newTag = s.toString();
                             }
 
                             @Override
@@ -106,13 +99,14 @@ public class AddDialog extends DialogFragment {
                             }
                         });
 
-                        alertDialogBuilder
+                        new AlertDialog.Builder(getActivity())
+                                .setView(v)
+                                .setTitle("Enter ticker:")
                                 .setCancelable(false)
                                 .setPositiveButton("Add",
                                         new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog,int id) {
-                                                mTicker.setText(userInput.getText().toString());
-                                                mOver.add(mTicker.toString());
+                                                sendTicker(Activity.RESULT_OK, mTicker.toString() + "1");
                                             }
                                         })
                                 .setNegativeButton("Cancel",
@@ -126,5 +120,16 @@ public class AddDialog extends DialogFragment {
                     }
                 })
                 .create();
+    }
+
+    private void sendTicker(int resultCode, String ticker) {
+        if (getTargetFragment() == null) {
+            return;
+        }
+
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_TICKER, ticker);
+
+        getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, intent);
     }
 }

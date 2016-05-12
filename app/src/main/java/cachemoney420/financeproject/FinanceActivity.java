@@ -1,5 +1,6 @@
 package cachemoney420.financeproject;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
@@ -9,13 +10,13 @@ import android.support.v4.util.Pair;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -35,7 +36,9 @@ public class FinanceActivity extends Fragment {
     private ComparisonAdapter mAdapter;
     private List<Comparison> mComparisons;
     private SQLiteDatabase mDatabase;
-    private EditText mTicker;
+    private String mFull;
+    private String mTicker;
+    private String mOU;
     private ArrayList<String> mOver;
     private ArrayList<String> mUnder;
 
@@ -44,6 +47,10 @@ public class FinanceActivity extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         mDatabase = new ComparisonBaseHelper(this.getActivity()).getWritableDatabase();
+        mOver = new ArrayList<String>();
+        mUnder = new ArrayList<String>();
+        mOver.add("WMT");
+        mUnder.add("AXP");
      }
 
     @Override
@@ -54,21 +61,6 @@ public class FinanceActivity extends Fragment {
         mComparisonRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         updateUI();
-
-        String[] over = {"WMT", "TGT", "AAL"};
-        String[] under = {"MCD", "BUD", "AXP"};
-
-        Compare compare = new Compare();
-        List<Pair<Pair<Double, Integer>, Pair<String, String>>> comp = compare.getCompare(over, under);
-
-        for (int i = 0; i < comp.size(); i++) {
-            Comparison c = new Comparison();
-            c.setOverweight(comp.get(i).second.first);
-            c.setUnderweight(comp.get(i).second.second);
-            c.setRatio(comp.get(i).first.first);
-            c.setRank(comp.get(i).first.second);
-            addComparison(c);
-        }
 
         return view;
     }
@@ -99,8 +91,57 @@ public class FinanceActivity extends Fragment {
                 dialog.setTargetFragment(FinanceActivity.this, REQUEST_TICKER);
                 dialog.show(manager, DIALOG_ADD);
                 return true;
+            case R.id.menu_item_refresh:
+                updateUI();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+
+        if (resultCode == REQUEST_TICKER) {
+            mFull= (String) data.getSerializableExtra(AddDialog.EXTRA_TICKER);
+            Log.d("thing passed on", mFull);
+            mTicker = mFull.substring(0,mFull.length()-1);
+            mOU = mFull.substring(mFull.length()-1);
+            if (mOU == "0") {
+                mUnder.add(mTicker);
+            }
+            if (mOU == "1") {
+                mOver.add(mTicker);
+            }
+        }
+
+
+        if (mOver.size() != 0 && mUnder.size() !=0) {
+
+            String[] over = new String[mOver.size()];
+            String[] under = new String[mUnder.size()];
+
+            for (int i = 0; i < mOver.size(); i++) {
+                over[i] = mOver.get(i);
+            }
+            for (int i = 0; i < mUnder.size(); i++) {
+                under[i] = mUnder.get(i);
+            }
+
+            Compare compare = new Compare();
+            List<Pair<Pair<Double, Integer>, Pair<String, String>>> comp = compare.getCompare(over, under);
+
+            for (int i = 0; i < comp.size(); i++) {
+                Comparison c = new Comparison();
+                c.setOverweight(comp.get(i).second.first);
+                c.setUnderweight(comp.get(i).second.second);
+                c.setRatio(comp.get(i).first.first);
+                c.setRank(comp.get(i).first.second);
+                addComparison(c);
+            }
         }
     }
 
