@@ -4,4 +4,9 @@
     <string name="rank">Rank: </string>
     <string name="ratio">Ratio:</string>
     <string name="refresh_string">Refresh</string>
+    <string name="delete_a_ticker">Delete a ticker:</string>
+    <string name="delete_all">Delete all</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete_ticker">Delete ticker</string>
 </resources>

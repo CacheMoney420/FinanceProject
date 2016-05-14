@@ -6,7 +6,11 @@
         android:icon="@drawable/ic_menu_add"
         android:title="@string/add_ticker"
         app:showAsAction="ifRoom|withText"/>
-
+    <item
+        android:id="@+id/menu_item_delete_ticker"
+        android:icon="@drawable/ic_menu_delete"
+        android:title="@string/delete_ticker"
+        app:showAsAction="ifRoom|withText"/>
     <item
         android:id="@+id/menu_item_refresh"
         android:icon="@drawable/ic_menu_refresh"
