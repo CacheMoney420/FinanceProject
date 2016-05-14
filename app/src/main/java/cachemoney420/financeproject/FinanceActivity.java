@@ -124,7 +124,7 @@ public class FinanceActivity extends Fragment {
         switch (item.getItemId()) {
             case R.id.menu_item_add_ticker:
                 FragmentManager manager = getFragmentManager();
-                AddDialog dialog = AddDialog.newInstance();
+                AddDialog dialog = AddDialog.newInstance(mOver, mUnder);
                 dialog.setTargetFragment(FinanceActivity.this, REQUEST_TICKER);
                 dialog.show(manager, DIALOG_ADD);
                 return true;
@@ -225,6 +225,12 @@ public class FinanceActivity extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != Activity.RESULT_OK) {
             return;
+        }
+
+        if (requestCode == REQUEST_TICKER) {
+            mComparisons.clear();
+            runComparison();
+            updateUI();
         }
 
         if (requestCode == REQUEST_TICKER2) {

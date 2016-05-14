@@ -1,12 +1,12 @@
 package cachemoney420.financeproject;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -22,16 +22,20 @@ public class AddDialog extends DialogFragment {
     private ArrayList<String> mOver;
     private ArrayList<String> mUnder;
 
-    public static AddDialog newInstance() {
+    public static AddDialog newInstance(ArrayList<String> over, ArrayList<String> under) {
         Bundle args = new Bundle();
 
         AddDialog fragment = new AddDialog();
+        args.putStringArrayList("Over", over);
+        args.putStringArrayList("Under", under);
         fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        mOver = getArguments().getStringArrayList("Over");
+        mUnder = getArguments().getStringArrayList("Under");
         return new AlertDialog.Builder(getActivity())
                 .setTitle("Add ticker...")
                 .setPositiveButton("Underweight", new DialogInterface.OnClickListener()
@@ -46,27 +50,31 @@ public class AddDialog extends DialogFragment {
                         alertDialogBuilder.setView(promptsView);
 
                         mTicker = (EditText) promptsView.findViewById(R.id.editTextDialogUserInput);
-                        mTicker.addTextChangedListener(new TextWatcher() {
-                            @Override
-                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            }
-
-                            @Override
-                            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                                mTicker.setText(s);
-                            }
-
-                            @Override
-                            public void afterTextChanged(Editable s) {
-                            }
-                        });
+//                        mTicker.addTextChangedListener(new TextWatcher() {
+//                            @Override
+//                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//                            }
+//
+//                            @Override
+//                            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                                mTicker.setText(s);
+//                            }
+//
+//                            @Override
+//                            public void afterTextChanged(Editable s) {
+//                            }
+//                        });
 
                         alertDialogBuilder
                                 .setCancelable(false)
                                 .setPositiveButton("Add",
                                         new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog,int id) {
-                                                mUnder.add(mTicker.toString());
+                                                String ticker = mTicker.getText().toString();
+                                                if (!mUnder.contains(ticker))
+                                                    mUnder.add(ticker);
+                                                Intent intent = new Intent();
+                                                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
                                             }
                                         })
                                 .setNegativeButton("Cancel",
@@ -91,28 +99,32 @@ public class AddDialog extends DialogFragment {
                         alertDialogBuilder.setView(promptsView);
 
                         final EditText userInput = (EditText) promptsView.findViewById(R.id.editTextDialogUserInput);
-                        userInput.addTextChangedListener(new TextWatcher() {
-                            @Override
-                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            }
-
-                            @Override
-                            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                                userInput.setText(s);
-                            }
-
-                            @Override
-                            public void afterTextChanged(Editable s) {
-                            }
-                        });
+//                        userInput.addTextChangedListener(new TextWatcher() {
+//                            @Override
+//                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//                            }
+//
+//                            @Override
+//                            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                                userInput.setText(s);
+//                            }
+//
+//                            @Override
+//                            public void afterTextChanged(Editable s) {
+//                            }
+//                        });
 
                         alertDialogBuilder
                                 .setCancelable(false)
                                 .setPositiveButton("Add",
                                         new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog,int id) {
-                                                mTicker.setText(userInput.getText().toString());
-                                                mOver.add(mTicker.toString());
+//                                                mTicker.setText(userInput.getText().toString());
+                                                String ticker = userInput.getText().toString();
+                                                if (!mOver.contains(ticker))
+                                                    mOver.add(userInput.getText().toString());
+                                                Intent intent = new Intent();
+                                                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
                                             }
                                         })
                                 .setNegativeButton("Cancel",
