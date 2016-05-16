@@ -104,13 +104,13 @@ public class Compare {
         Over ticker = specificPair.second.first
         Under ticker = specificPair.second.second
          */
-/*        try {
+        try {
             return new StockTask().execute(over, under).get();
         } catch (InterruptedException ie) {
             Log.d(TAG, ie.getMessage());
         } catch (ExecutionException ee) {
             Log.d(TAG, ee.getMessage());
-        }*/
+        }
         return new ArrayList<>();
     }
 }

@@ -15,9 +15,6 @@ import java.util.ArrayList;
 
 public class AddDialog extends DialogFragment {
 
-    public static final String EXTRA_TICKER = "ticker";
-    public static final int OU = 0;
-
     private EditText mTicker;
     private ArrayList<String> mOver;
     private ArrayList<String> mUnder;
@@ -50,22 +47,9 @@ public class AddDialog extends DialogFragment {
                         alertDialogBuilder.setView(promptsView);
 
                         mTicker = (EditText) promptsView.findViewById(R.id.editTextDialogUserInput);
-//                        mTicker.addTextChangedListener(new TextWatcher() {
-//                            @Override
-//                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//                            }
-//
-//                            @Override
-//                            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                                mTicker.setText(s);
-//                            }
-//
-//                            @Override
-//                            public void afterTextChanged(Editable s) {
-//                            }
-//                        });
 
                         alertDialogBuilder
+                                .setTitle("Enter ticker")
                                 .setCancelable(false)
                                 .setPositiveButton("Add",
                                         new DialogInterface.OnClickListener() {
@@ -99,27 +83,13 @@ public class AddDialog extends DialogFragment {
                         alertDialogBuilder.setView(promptsView);
 
                         final EditText userInput = (EditText) promptsView.findViewById(R.id.editTextDialogUserInput);
-//                        userInput.addTextChangedListener(new TextWatcher() {
-//                            @Override
-//                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//                            }
-//
-//                            @Override
-//                            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                                userInput.setText(s);
-//                            }
-//
-//                            @Override
-//                            public void afterTextChanged(Editable s) {
-//                            }
-//                        });
 
                         alertDialogBuilder
+                                .setTitle("Enter ticker")
                                 .setCancelable(false)
                                 .setPositiveButton("Add",
                                         new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog,int id) {
-//                                                mTicker.setText(userInput.getText().toString());
                                                 String ticker = userInput.getText().toString();
                                                 if (!mOver.contains(ticker))
                                                     mOver.add(userInput.getText().toString());

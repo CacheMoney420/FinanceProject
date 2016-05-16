@@ -40,7 +40,6 @@ public class FinanceActivity extends Fragment {
     private ComparisonAdapter mAdapter;
     private List<Comparison> mComparisons;
     private SQLiteDatabase mDatabase;
-    private EditText mTicker;
     private ArrayList<String> mOver;
     private ArrayList<String> mUnder;
 
@@ -49,6 +48,8 @@ public class FinanceActivity extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         mDatabase = new ComparisonBaseHelper(this.getActivity()).getWritableDatabase();
+        mOver = new ArrayList<>();
+        mUnder = new ArrayList<>();
      }
 
     @Override
@@ -60,21 +61,18 @@ public class FinanceActivity extends Fragment {
 
         updateUI();
 
-
-//        String[] over = {"WMT", "TGT", "AAL"};
-//        String[] under = {"MCD", "BUD", "AXP"};
-        mOver = new ArrayList<String>() {{
-            add("WMT");
-            add("TGT");
-            add("AAL");
-        }
-        };
-        mUnder = new ArrayList<String>() {{
-            add("MCD");
-            add("BUD");
-            add("AXP");
-        }
-        };
+//        mOver = new ArrayList<String>() {{
+//            add("WMT");
+//            add("TGT");
+//            add("AAL");
+//        }
+//        };
+//        mUnder = new ArrayList<String>() {{
+//            add("MCD");
+//            add("BUD");
+//            add("AXP");
+//        }
+//        };
 
 //        Compare compare = new Compare();
 
@@ -137,7 +135,6 @@ public class FinanceActivity extends Fragment {
             case R.id.menu_item_refresh:
 //                mDatabase.delete(ComparisonDbSchema.ComparisonTable.NAME, null, null);
                 mComparisons.clear();
-                runComparison();
                 updateUI();
             default:
                 return super.onOptionsItemSelected(item);
@@ -145,6 +142,8 @@ public class FinanceActivity extends Fragment {
     }
 
     private void updateUI() {
+
+        runComparison();
 
         if (mAdapter == null) {
             mAdapter = new ComparisonAdapter(mComparisons);
@@ -229,7 +228,6 @@ public class FinanceActivity extends Fragment {
 
         if (requestCode == REQUEST_TICKER) {
             mComparisons.clear();
-            runComparison();
             updateUI();
         }
 
