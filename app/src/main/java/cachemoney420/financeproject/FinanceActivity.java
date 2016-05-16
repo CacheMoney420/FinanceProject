@@ -10,16 +10,18 @@ import android.support.v4.util.Pair;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import cachemoney420.financeproject.database.ComparisonBaseHelper;
@@ -29,16 +31,16 @@ import cachemoney420.financeproject.database.ComparisonDbSchema;
 public class FinanceActivity extends Fragment {
 
     private static final String DIALOG_ADD = "DialogAdd";
+    private static final String DIALOG_DELETE = "DialogDelete";
 
     private static final int REQUEST_TICKER = 0;
+    private static final int REQUEST_TICKER2 = 1;
 
     private RecyclerView mComparisonRecyclerView;
     private ComparisonAdapter mAdapter;
     private List<Comparison> mComparisons;
     private SQLiteDatabase mDatabase;
-    private String mFull;
-    private String mTicker;
-    private String mOU;
+    private EditText mTicker;
     private ArrayList<String> mOver;
     private ArrayList<String> mUnder;
 
@@ -47,10 +49,6 @@ public class FinanceActivity extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         mDatabase = new ComparisonBaseHelper(this.getActivity()).getWritableDatabase();
-        mOver = new ArrayList<String>();
-        mUnder = new ArrayList<String>();
-        mOver.add("WMT");
-        mUnder.add("AXP");
      }
 
     @Override
@@ -62,7 +60,46 @@ public class FinanceActivity extends Fragment {
 
         updateUI();
 
+
+//        String[] over = {"WMT", "TGT", "AAL"};
+//        String[] under = {"MCD", "BUD", "AXP"};
+        mOver = new ArrayList<String>() {{
+            add("WMT");
+            add("TGT");
+            add("AAL");
+        }
+        };
+        mUnder = new ArrayList<String>() {{
+            add("MCD");
+            add("BUD");
+            add("AXP");
+        }
+        };
+
+//        Compare compare = new Compare();
+
+        runComparison();
+
         return view;
+    }
+
+    private void runComparison() {
+        if (mOver.size() != 0 && mUnder.size() != 0) {
+            String[] over = new String[mOver.size()];
+            over = mOver.toArray(over);
+            String[] under = new String[mUnder.size()];
+            under = mUnder.toArray(under);
+            List<Pair<Pair<Double, Integer>, Pair<String, String>>> comp = Compare.getCompare(over, under);
+
+            for (int i = 0; i < comp.size(); i++) {
+                Comparison c = new Comparison();
+                c.setOverweight(comp.get(i).second.first);
+                c.setUnderweight(comp.get(i).second.second);
+                c.setRatio(comp.get(i).first.first);
+                c.setRank(comp.get(i).first.second);
+                addComparison(c);
+            }
+        }
     }
 
     @Override
@@ -87,61 +124,23 @@ public class FinanceActivity extends Fragment {
         switch (item.getItemId()) {
             case R.id.menu_item_add_ticker:
                 FragmentManager manager = getFragmentManager();
-                AddDialog dialog = AddDialog.newInstance();
+                AddDialog dialog = AddDialog.newInstance(mOver, mUnder);
                 dialog.setTargetFragment(FinanceActivity.this, REQUEST_TICKER);
                 dialog.show(manager, DIALOG_ADD);
                 return true;
-            case R.id.menu_item_refresh:
-                updateUI();
+            case R.id.menu_item_delete_ticker:
+                FragmentManager manager1 = getFragmentManager();
+                DeleteDialog dialog1 = DeleteDialog.newInstance(((ArrayList<String>) mOver.clone()), ((ArrayList<String>) mUnder.clone()));
+                dialog1.setTargetFragment(this, REQUEST_TICKER2);
+                dialog1.show(manager1, DIALOG_DELETE);
                 return true;
+            case R.id.menu_item_refresh:
+//                mDatabase.delete(ComparisonDbSchema.ComparisonTable.NAME, null, null);
+                mComparisons.clear();
+                runComparison();
+                updateUI();
             default:
                 return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != Activity.RESULT_OK) {
-            return;
-        }
-
-        if (resultCode == REQUEST_TICKER) {
-            mFull= (String) data.getSerializableExtra(AddDialog.EXTRA_TICKER);
-            Log.d("thing passed on", mFull);
-            mTicker = mFull.substring(0,mFull.length()-1);
-            mOU = mFull.substring(mFull.length()-1);
-            if (mOU == "0") {
-                mUnder.add(mTicker);
-            }
-            if (mOU == "1") {
-                mOver.add(mTicker);
-            }
-        }
-
-
-        if (mOver.size() != 0 && mUnder.size() !=0) {
-
-            String[] over = new String[mOver.size()];
-            String[] under = new String[mUnder.size()];
-
-            for (int i = 0; i < mOver.size(); i++) {
-                over[i] = mOver.get(i);
-            }
-            for (int i = 0; i < mUnder.size(); i++) {
-                under[i] = mUnder.get(i);
-            }
-
-            Compare compare = new Compare();
-            List<Pair<Pair<Double, Integer>, Pair<String, String>>> comp = compare.getCompare(over, under);
-
-            for (int i = 0; i < comp.size(); i++) {
-                Comparison c = new Comparison();
-                c.setOverweight(comp.get(i).second.first);
-                c.setUnderweight(comp.get(i).second.second);
-                c.setRatio(comp.get(i).first.first);
-                c.setRank(comp.get(i).first.second);
-                addComparison(c);
-            }
         }
     }
 
@@ -219,6 +218,35 @@ public class FinanceActivity extends Fragment {
 
         public void setComparisons(List<Comparison> comparisons) {
             mComparisons = comparisons;
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+
+        if (requestCode == REQUEST_TICKER) {
+            mComparisons.clear();
+            runComparison();
+            updateUI();
+        }
+
+        if (requestCode == REQUEST_TICKER2) {
+            String ticker = (String) data.getSerializableExtra(DeleteDialog.EXTRA_TICKER);
+            if (ticker != null) {
+//                mDatabase.delete(ComparisonDbSchema.ComparisonTable.NAME, null, null);
+                if (!mOver.remove(ticker)) {
+                    mUnder.remove(ticker);
+                }
+                mComparisons.clear();
+                runComparison();
+            } else {
+//                mDatabase.delete(ComparisonDbSchema.ComparisonTable.NAME, null, null);
+                mComparisons.clear();
+            }
+            updateUI();
         }
     }
 
